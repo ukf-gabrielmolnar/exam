@@ -1,0 +1,30 @@
+version: '3'
+
+networks:
+  molnar-api-exam:
+
+services:
+  molnar-php-exam:
+    build:
+      context: .
+      dockerfile: config/Dockerfile
+    image: gmlnar/molnar-php-exam
+    container_name: MolnarPhpExam
+    expose:
+      - 9000
+    networks:
+      - molnar-api-exam
+    volumes:
+      - ./src:/var/www/html
+  molnar-web-exam:
+    image: library/nginx:1.20.1
+    container_name: MolnarWebExam
+    ports:
+      - "8086:80"
+    networks:
+      - molnar-api-exam
+    depends_on:
+      - molnar-php-exam
+    volumes:
+      - ./src:/var/www/html
+      - ./config/default.conf:/etc/nginx/conf.d/default.conf
